@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCN // Tactical Aids Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Exo+2:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0a1420;
+    --navy:#0e1e2f;
+    --navy-panel:#132a40;
+    --navy-line:#22415c;
+    --orange:#e8823c;
+    --ink:#e9eef3;
+    --ink-dim:#8fa3b8;
+    --black:#04070a;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--navy-deep);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(34,65,92,0.25), transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(232,130,60,0.06), transparent 55%);
+    color:var(--ink);
+    font-family:'Exo 2', sans-serif;
+    min-height:100vh;
+  }
+
+  /* ---- header ---- */
+  header{
+    background:linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    border-bottom:2px solid var(--navy-line);
+    padding:28px 32px 0;
+    position:sticky;
+    top:0;
+    z-index:20;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  .brand-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+  .logo-badge{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    border:2px solid var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    background:radial-gradient(circle, rgba(232,130,60,0.15), transparent 70%);
+  }
+  .logo-badge svg{width:24px;height:24px;}
+
+  .brand-text h1{
+    font-family:'Orbitron', sans-serif;
+    font-weight:800;
+    font-size:22px;
+    letter-spacing:2px;
+    margin:0;
+    color:var(--ink);
+  }
+  .brand-text p{
+    margin:2px 0 0;
+    font-size:11px;
+    letter-spacing:3px;
+    color:var(--orange);
+    text-transform:uppercase;
+    font-weight:600;
+  }
+
+  .classified-strip{
+    margin-left:auto;
+    background:var(--black);
+    border:1px solid var(--orange);
+    color:var(--orange);
+    font-family:'Orbitron', sans-serif;
+    font-size:10px;
+    letter-spacing:3px;
+    font-weight:600;
+    padding:5px 12px;
+    white-space:nowrap;
+  }
+
+  /* ---- tabs ---- */
+  .tabs{
+    max-width:1200px;
+    margin:22px auto 0;
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    padding-bottom:0;
+  }
+
+  .tab{
+    font-family:'Exo 2', sans-serif;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:0.5px;
+    color:var(--ink-dim);
+    background:var(--navy-panel);
+    border:1px solid var(--navy-line);
+    border-bottom:none;
+    border-radius:6px 6px 0 0;
+    padding:10px 18px;
+    cursor:pointer;
+    position:relative;
+    top:1px;
+    transition:color 0.15s ease, background 0.15s ease;
+  }
+  .tab:hover{ color:var(--ink); }
+  .tab.active{
+    color:var(--ink);
+    background:var(--navy-deep);
+    border-color:var(--navy-line);
+    box-shadow:inset 0 3px 0 var(--orange);
+  }
+  .tab .count{
+    color:var(--ink-dim);
+    font-size:11px;
+    margin-left:6px;
+  }
+  .tab.active .count{ color:var(--orange); }
+
+  /* ---- search ---- */
+  .toolbar{
+    max-width:1200px;
+    margin:0 auto;
+    padding:18px 0 22px;
+    border-bottom:1px solid var(--navy-line);
+  }
+  .search-wrap{
+    position:relative;
+    max-width:420px;
+  }
+  .search-wrap input{
+    width:100%;
+    background:var(--navy-panel);
+    border:1px solid var(--navy-line);
+    color:var(--ink);
+    font-family:'Exo 2', sans-serif;
+    font-size:14px;
+    padding:11px 14px 11px 38px;
+    border-radius:4px;
+    outline:none;
+  }
+  .search-wrap input:focus{ border-color:var(--orange); }
+  .search-wrap input::placeholder{ color:var(--ink-dim); }
+  .search-wrap svg{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    width:16px;
+    height:16px;
+    color:var(--ink-dim);
+  }
+
+  /* ---- main ---- */
+  main{
+    max-width:1200px;
+    margin:0 auto;
+    padding:28px 32px 80px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+    gap:16px;
+  }
+
+  .card{
+    background:var(--navy-panel);
+    border:1px solid var(--navy-line);
+    border-radius:6px;
+    padding:18px 16px 14px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    transition:border-color 0.15s ease, transform 0.15s ease;
+  }
+  .card:hover{
+    border-color:var(--orange);
+    transform:translateY(-2px);
+  }
+
+  .ribbon{
+    position:absolute;
+    top:10px;
+    right:-30px;
+    transform:rotate(45deg);
+    background:var(--black);
+    color:var(--orange);
+    font-family:'Orbitron', sans-serif;
+    font-size:8px;
+    font-weight:600;
+    letter-spacing:2px;
+    padding:2px 34px;
+    border-top:1px solid var(--orange);
+    border-bottom:1px solid var(--orange);
+  }
+
+  .card .cat-label{
+    font-size:10px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--orange);
+    font-weight:600;
+  }
+  .card h3{
+    margin:0;
+    font-size:15px;
+    font-weight:600;
+    line-height:1.35;
+    padding-right:28px;
+  }
+  .card .meta{
+    font-size:11px;
+    color:var(--ink-dim);
+    margin-top:auto;
+  }
+
+  .card-actions{
+    display:flex;
+    gap:8px;
+    margin-top:4px;
+  }
+  .btn{
+    flex:1;
+    text-align:center;
+    font-family:'Exo 2', sans-serif;
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:0.5px;
+    padding:8px 0;
+    border-radius:4px;
+    text-decoration:none;
+    cursor:pointer;
+    border:1px solid var(--navy-line);
+    color:var(--ink);
+    background:transparent;
+    transition:background 0.15s ease, border-color 0.15s ease;
+  }
+  .btn:hover{ border-color:var(--orange); }
+  .btn.primary{
+    background:var(--orange);
+    border-color:var(--orange);
+    color:var(--black);
+  }
+  .btn.primary:hover{ background:#f19552; }
+
+  .empty-state{
+    grid-column:1 / -1;
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-dim);
+  }
+  .empty-state strong{
+    display:block;
+    color:var(--ink);
+    font-family:'Orbitron', sans-serif;
+    letter-spacing:1px;
+    font-size:14px;
+    margin-bottom:6px;
+  }
+
+  /* ---- viewer modal ---- */
+  .viewer-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(4,7,10,0.85);
+    z-index:100;
+    padding:24px;
+  }
+  .viewer-overlay.open{ display:flex; flex-direction:column; }
+  .viewer-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    max-width:1000px;
+    width:100%;
+    margin:0 auto 12px;
+  }
+  .viewer-bar h4{
+    margin:0;
+    font-size:14px;
+    color:var(--ink);
+    font-weight:600;
+  }
+  .viewer-bar button{
+    background:var(--navy-panel);
+    border:1px solid var(--navy-line);
+    color:var(--ink);
+    font-family:'Exo 2', sans-serif;
+    font-size:13px;
+    padding:8px 16px;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  .viewer-bar button:hover{ border-color:var(--orange); }
+  .viewer-frame{
+    flex:1;
+    max-width:1000px;
+    width:100%;
+    margin:0 auto;
+    background:var(--black);
+    border:1px solid var(--navy-line);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .viewer-frame iframe{
+    width:100%;
+    height:100%;
+    border:none;
+  }
+
+  footer{
+    text-align:center;
+    padding:20px;
+    font-size:11px;
+    color:var(--ink-dim);
+    letter-spacing:1px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-row">
+    <div class="logo-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#e8823c" stroke-width="1.5">
+        <path d="M12 2 L14.5 9.5 L22 12 L14.5 14.5 L12 22 L9.5 14.5 L2 12 L9.5 9.5 Z" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <h1>TACTICAL AIDS ARCHIVE</h1>
+      <p>UCN Field Reference Library</p>
+    </div>
+    <div class="classified-strip">CLASSIFIED // UCN EYES ONLY</div>
+  </div>
+
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<div class="toolbar">
+  <div class="search-wrap" style="margin-left:32px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="search" placeholder="Search tactical aids…" autocomplete="off">
+  </div>
+</div>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>UCN TACTICAL AIDS ARCHIVE — INTERNAL DISTRIBUTION ONLY</footer>
+
+<div class="viewer-overlay" id="viewerOverlay">
+  <div class="viewer-bar">
+    <h4 id="viewerTitle"></h4>
+    <button id="viewerClose">Close ✕</button>
+  </div>
+  <div class="viewer-frame">
+    <iframe id="viewerFrame" src=""></iframe>
+  </div>
+</div>
+
+<script>
+let manifest = { categories: [] };
+let activeTab = 'all';
+
+async function loadManifest() {
+  try {
+    const res = await fetch('manifest.json', { cache: 'no-store' });
+    manifest = await res.json();
+  } catch (e) {
+    manifest = { categories: [] };
+  }
+  renderTabs();
+  renderGrid();
+}
+
+function allFiles() {
+  return manifest.categories.flatMap(cat =>
+    cat.files.map(f => ({ ...f, categoryId: cat.id, categoryLabel: cat.label }))
+  );
+}
+
+function renderTabs() {
+  const tabsEl = document.getElementById('tabs');
+  const total = allFiles().length;
+  let html = `<button class="tab ${activeTab === 'all' ? 'active' : ''}" data-tab="all">All <span class="count">${total}</span></button>`;
+  for (const cat of manifest.categories) {
+    html += `<button class="tab ${activeTab === cat.id ? 'active' : ''}" data-tab="${cat.id}">${cat.label} <span class="count">${cat.files.length}</span></button>`;
+  }
+  tabsEl.innerHTML = html;
+  tabsEl.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTab = btn.dataset.tab;
+      renderTabs();
+      renderGrid();
+    });
+  });
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const query = document.getElementById('search').value.trim().toLowerCase();
+
+  let files = activeTab === 'all'
+    ? allFiles()
+    : allFiles().filter(f => f.categoryId === activeTab);
+
+  if (query) {
+    files = files.filter(f =>
+      f.name.toLowerCase().includes(query) ||
+      f.categoryLabel.toLowerCase().includes(query)
+    );
+  }
+
+  if (files.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <strong>NO MATCHING RECORDS</strong>
+        Add PDFs to the /pdfs/&lt;category&gt;/ folder in the repo — they'll appear here automatically on next deploy.
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = files.map(f => `
+    <div class="card">
+      <div class="ribbon">FIELD USE</div>
+      <div class="cat-label">${f.categoryLabel}</div>
+      <h3>${f.name}</h3>
+      <div class="meta">${formatSize(f.size)}</div>
+      <div class="card-actions">
+        <button class="btn primary" onclick="openViewer('${f.path}', '${f.name.replace(/'/g, "\\'")}')">View</button>
+        <a class="btn" href="${f.path}" download>Download</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openViewer(path, title) {
+  document.getElementById('viewerFrame').src = path;
+  document.getElementById('viewerTitle').textContent = title;
+  document.getElementById('viewerOverlay').classList.add('open');
+}
+function closeViewer() {
+  document.getElementById('viewerOverlay').classList.remove('open');
+  document.getElementById('viewerFrame').src = '';
+}
+document.getElementById('viewerClose').addEventListener('click', closeViewer);
+document.getElementById('viewerOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'viewerOverlay') closeViewer();
+});
+
+document.getElementById('search').addEventListener('input', renderGrid);
+
+loadManifest();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "generated": "2026-07-18T12:51:07.661Z",
+  "categories": [
+    {
+      "id": "engineering",
+      "label": "Engineering",
+      "files": [
+        {
+          "name": "Warp Guide",
+          "filename": "warp-guide.pdf",
+          "path": "pdfs/engineering/warp-guide.pdf",
+          "size": 611815,
+          "modified": "2026-07-18T12:51:04.585Z"
+        }
+      ]
+    },
+    {
+      "id": "identification",
+      "label": "Identification",
+      "files": [
+        {
+          "name": "Identification Guide",
+          "filename": "identification-guide.pdf",
+          "path": "pdfs/identification/identification-guide.pdf",
+          "size": 936375,
+          "modified": "2026-07-18T12:51:03.961Z"
+        }
+      ]
+    },
+    {
+      "id": "medical",
+      "label": "Medical",
+      "files": []
+    },
+    {
+      "id": "navigation",
+      "label": "Navigation",
+      "files": [
+        {
+          "name": "Navigation Guide",
+          "filename": "navigation-guide.pdf",
+          "path": "pdfs/navigation/navigation-guide.pdf",
+          "size": 1599386,
+          "modified": "2026-07-18T12:51:04.377Z"
+        }
+      ]
+    },
+    {
+      "id": "weapons-systems",
+      "label": "Weapons Systems",
+      "files": []
+    }
+  ]
+}
