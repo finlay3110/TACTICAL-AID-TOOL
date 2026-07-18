@@ -27,32 +27,3 @@ spaces automatically.
 
 Just create a new folder under `/pdfs/`, e.g. `pdfs/communications/`, and add
 PDFs to it. It'll show up as a new tab automatically on next deploy.
-
-## Deploying to Netlify
-
-**Recommended: git-connected (auto-deploys on every push)**
-1. Push this folder to a GitHub repo.
-2. In Netlify: "Add new site" → "Import an existing project" → pick the repo.
-3. Build command: `node build-manifest.js` (already set in `netlify.toml`)
-4. Publish directory: `.` (already set)
-5. Deploy. From now on, any git push updates the live site.
-
-**Quick alternative: drag-and-drop**
-- Run `node build-manifest.js` locally first (so `manifest.json` is current),
-  then zip the whole folder and drag it into the Netlify dashboard. You'll
-  need to re-zip and re-upload each time you add a PDF this way.
-
-## Replacing the placeholder PDFs
-
-The five PDFs currently in `/pdfs/` are placeholders to demo the layout —
-delete or replace them with the real tactical aids whenever you're ready.
-
-## Local preview
-
-Any static server works, e.g.:
-```
-cd tactical-aids
-node build-manifest.js
-python3 -m http.server 8000
-```
-Then open `http://localhost:8000`.
