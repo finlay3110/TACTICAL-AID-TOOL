@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-30T13:47:01.432Z",
+  "generated": "2026-07-30T13:53:43.481Z",
   "categories": [
     {
       "id": "engineering",
@@ -41,6 +41,11 @@
       ]
     },
     {
+      "id": "medical",
+      "label": "Medical",
+      "files": []
+    },
+    {
       "id": "navigation",
       "label": "Navigation",
       "files": [
@@ -72,6 +77,11 @@
           "modified": "2026-07-30T13:45:39.229Z"
         }
       ]
+    },
+    {
+      "id": "weapons-systems",
+      "label": "Weapons Systems",
+      "files": []
     }
   ]
 }

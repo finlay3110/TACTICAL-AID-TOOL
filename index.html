@@ -402,12 +402,26 @@ function allFiles() {
   );
 }
 
+const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+// Category and file names come straight from folder/filenames on disk, so they
+// can contain quotes, ampersands and angle brackets. Escape before interpolating.
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => HTML_ESCAPES[c]);
+}
+
+// Encode per segment so spaces, '#', '?' and '&' in filenames survive as a URL
+// while the '/' separators stay intact.
+function encodePath(path) {
+  return path.split('/').map(encodeURIComponent).join('/');
+}
+
 function renderTabs() {
   const tabsEl = document.getElementById('tabs');
   const total = allFiles().length;
   let html = `<button class="tab ${activeTab === 'all' ? 'active' : ''}" data-tab="all">All <span class="count">${total}</span></button>`;
   for (const cat of manifest.categories) {
-    html += `<button class="tab ${activeTab === cat.id ? 'active' : ''}" data-tab="${cat.id}">${cat.label} <span class="count">${cat.files.length}</span></button>`;
+    html += `<button class="tab ${activeTab === cat.id ? 'active' : ''}" data-tab="${escapeHtml(cat.id)}">${escapeHtml(cat.label)} <span class="count">${cat.files.length}</span></button>`;
   }
   tabsEl.innerHTML = html;
   tabsEl.querySelectorAll('.tab').forEach(btn => {
@@ -449,21 +463,40 @@ function renderGrid() {
     return;
   }
 
-  grid.innerHTML = files.map(f => `
+  grid.innerHTML = files.map(f => {
+    const href = encodePath(f.path);
+    return `
     <div class="card">
       <div class="ribbon">FIELD USE</div>
-      <div class="cat-label">${f.categoryLabel}</div>
-      <h3>${f.name}</h3>
+      <div class="cat-label">${escapeHtml(f.categoryLabel)}</div>
+      <h3>${escapeHtml(f.name)}</h3>
       <div class="meta">${formatSize(f.size)}</div>
       <div class="card-actions">
-        <button class="btn primary" onclick="openViewer('${f.path}', '${f.name.replace(/'/g, "\\'")}')">View</button>
-        <a class="btn" href="${f.path}" download>Download</a>
+        <button class="btn primary" data-path="${href}" data-name="${escapeHtml(f.name)}">View</button>
+        <a class="btn" href="${href}" download>Download</a>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.btn.primary').forEach(btn => {
+    btn.addEventListener('click', () => openViewer(btn.dataset.path, btn.dataset.name));
+  });
+}
+
+// iOS/iPadOS Safari and most mobile browsers render a PDF in an iframe as a
+// blank frame, so those get the PDF in a new tab instead of the modal viewer.
+function supportsInlinePdf() {
+  const ua = navigator.userAgent;
+  const iOS = /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  return !iOS && !/Android/.test(ua);
 }
 
 function openViewer(path, title) {
+  if (!supportsInlinePdf()) {
+    window.open(path, '_blank', 'noopener');
+    return;
+  }
   document.getElementById('viewerFrame').src = path;
   document.getElementById('viewerTitle').textContent = title;
   document.getElementById('viewerOverlay').classList.add('open');
@@ -475,6 +508,9 @@ function closeViewer() {
 document.getElementById('viewerClose').addEventListener('click', closeViewer);
 document.getElementById('viewerOverlay').addEventListener('click', (e) => {
   if (e.target.id === 'viewerOverlay') closeViewer();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeViewer();
 });
 
 document.getElementById('search').addEventListener('input', renderGrid);
