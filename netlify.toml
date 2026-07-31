@@ -6,3 +6,16 @@
   for = "/pdfs/*"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+
+# PDFs live at /pdfs/<category>/<file>.pdf. Spelled out explicitly so the rule
+# applies regardless of whether a single "*" spans the nested path segment.
+[[headers]]
+  for = "/pdfs/*/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# The service worker must be revalidated, or clients get stuck on an old one.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

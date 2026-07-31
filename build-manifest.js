@@ -13,7 +13,9 @@ const OUT_FILE = path.join(ROOT, 'manifest.json');
 function titleCase(str) {
   return str
     .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+    // Only capitalise at a real word start — not after an apostrophe, which
+    // would turn "Ship's Manifest" into "Ship'S Manifest".
+    .replace(/(^|[^A-Za-z'])(\w)/g, (m, before, c) => before + c.toUpperCase());
 }
 
 function buildManifest() {
@@ -33,11 +35,26 @@ function buildManifest() {
     .filter((entry) => entry.isDirectory())
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  const skipped = [];
+
   for (const dir of categoryDirs) {
     const categoryPath = path.join(PDFS_DIR, dir.name);
-    const files = fs
-      .readdirSync(categoryPath)
-      .filter((f) => f.toLowerCase().endsWith('.pdf'))
+    const entries = fs.readdirSync(categoryPath, { withFileTypes: true });
+
+    // Anything that is not a top-level .pdf is invisible to the site. Say so,
+    // rather than letting a misfiled PDF disappear without explanation.
+    for (const entry of entries) {
+      const rel = `pdfs/${dir.name}/${entry.name}`;
+      if (entry.isDirectory()) {
+        skipped.push(`${rel}/ — nested folders are not scanned; move the PDFs up one level or make it its own category`);
+      } else if (!entry.name.toLowerCase().endsWith('.pdf') && entry.name !== '.gitkeep') {
+        skipped.push(`${rel} — not a .pdf`);
+      }
+    }
+
+    const files = entries
+      .filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.pdf'))
+      .map((e) => e.name)
       .sort((a, b) => a.localeCompare(b));
 
     manifest.categories.push({
@@ -62,6 +79,11 @@ function buildManifest() {
   console.log(
     `manifest.json built: ${manifest.categories.length} categories, ${totalFiles} PDFs.`
   );
+
+  if (skipped.length) {
+    console.warn(`\n${skipped.length} item(s) skipped and will NOT appear on the site:`);
+    for (const line of skipped) console.warn(`  - ${line}`);
+  }
 }
 
 buildManifest();
